@@ -114,7 +114,7 @@ hr {
     .summary {
         margin-top: 16px;
         font-weight: $light;
-        font-size: $bigger;
+        font-size: $big;
         line-height: 1.444;
     }
     hr {
@@ -145,12 +145,12 @@ hr {
             width: 39px;
             height: 28px;
             margin-right: 9px;
-            font-size: $smaller;
+            font-size: $small;
             background: $color-bubble;
             border-radius: 14px;
         }
         .like {
-            font-size: $smaller;
+            font-size: $small;
         }
     }
 }
@@ -182,7 +182,7 @@ hr {
     @include flex-center;
     margin-top: 52px;
     .title {
-        font-size: $bigger;
+        font-size: $big;
         font-weight: $normal;
         float: left;
         margin-right: 19px;
@@ -207,7 +207,7 @@ hr {
         .month {
             display: inline-flex;
             padding: 0 15px;
-            font-size: $smaller;
+            font-size: $small;
             font-weight: $normal;
             color: #ccc;
             cursor: pointer;
@@ -226,5 +226,58 @@ hr {
 @media only screen and (min-width: 1000px) {
     #tabs #month-list {
         overflow: hidden;
+    }
+}
+
+// Expenses and categories
+#expenses {
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1em;
+    text-align: center;
+    #sum {
+        font-size: $big;
+        margin-left: 8px;
+    }
+    #category {
+        margin-top: 11px;
+        font-size: $small;
+    }
+}
+
+// Income and outcome boxes
+#total {
+    position: absolute;
+    box-sizing: border-box;
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    .amount {
+        @include flex-center($flex: inline-flex);
+        width: 163px;
+        height: 70px;
+        border-radius: 4px;
+        margin: 1em .5em;
+        border: 1px solid;
+        &.income {
+            border-color: $color-blue;
+        }
+        &.outcome {
+            border-color: $color-pink;
+        }
+        .usd {
+            font-size: $bigger;
+        }
+        .cents-wrap {
+            width: 30px;
+            text-align: center;
+            .cents, .stat-icon {
+                display: inline-block;
+                font-size: $small;
+            }
+        }
+        
     }
 }

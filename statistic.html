@@ -63,22 +63,29 @@
         </ul>
     </div>
 
-    <div id="bottom-bar">
-        <a href="#" class="icon">
-            <img src="./src/images/icons/user.png" alt="Profile">
-        </a>
-        <a href="/" class="icon">
-            <img src="./src/images/icons/statistic.png" alt="Statistics">
-        </a>
-        <a href="" class="icon active">
-            <img src="./src/images/icons/bell.png" alt="Notifications">
-        </a>
-        <a href="#" class="icon">
-            <img src="./src/images/icons/bookmark.png" alt="Bookmarks">
-        </a>
-        <a href="#" class="icon">
-            <img src="./src/images/icons/square-up.png" alt="Title">
-        </a>
+    <div id="expenses">
+        <p id="spent">
+            <img src="./src/images/icons/utensils.png" alt="Food and restaurants">
+            <span id="sum">$230</span>
+        </p>
+        <p id="category">Food and restaurants</p>
+    </div>
+
+    <div id="total">
+        <div class="amount income">
+            <p class="usd">+$1400</p>
+            <div class="cents-wrap">
+                <p class="cents">99</p>
+                <img src="./src/images/icons/income.png" class="stat-icon">
+            </div>
+        </div>
+        <div class="amount outcome">
+            <p class="usd">-$980</p>
+            <div class="cents-wrap">
+                <p class="cents">25</p>
+                <img src="./src/images/icons/outcome.png" class="stat-icon">
+            </div>
+        </div>
     </div>
 
     <script src="./lib/app.bundle.js"></script>
