@@ -1,0 +1,230 @@
+@import "_reset";
+@import "_variables";
+@import "_mixins";
+
+body {
+    width: 100%;
+    height: 100%;
+    background: $color-bg;
+    font-family: $font-main;
+    color: $color-white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: $light;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    color: rgba($color-white, .15s);
+    background: rgba($color-white, .15s);
+}
+
+#back {
+    position: absolute;
+    width: 43px;
+    height: 43px;
+    top: 37px;
+    left: 38px;
+    z-index: 2;
+    #ellipse {
+        @include flex-center;
+        box-sizing: border-box;
+        width: inherit;
+        height: inherit;
+        box-shadow: inset 0 0 0 1px rgba($color-white, .2);
+        border-radius: 50%;
+        background: rgba($color-white, .07);
+        @include transition;
+        &:after {
+            box-sizing: inherit;
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            opacity: 0;
+            @include transition;
+        }
+        &:hover {
+            background: rgba($color-white, .1);
+            &:after {
+                opacity: 1;
+                border-top: 1px solid rgba($color-white, .4);
+                transform: rotate(270deg);
+            }
+        }
+    }
+}
+
+.image-container {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    .image {
+        width: 100%;
+        height: auto;
+    }
+    #overlay-image {
+        position: absolute;    
+        display: block;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: $color-overlay;
+    }
+    #overlay-wrapper {
+        position: absolute;
+        height: 120%;
+        width: 100%;
+        top: 0;
+        overflow: hidden;
+        #overlay-gradient {
+            position: absolute;
+            bottom: 156px;
+            width: 120%;
+            height: 176px;
+            transform-origin: left top;
+            opacity: .5;
+            transform: rotate(15deg);
+            background: linear-gradient(351deg, $color-violet, $color-pink);
+        }
+    }
+    #overlay-top {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0, $color-bg, rgba($color-white, 0));
+    }
+}
+
+.article {
+    position: absolute;
+    top: 276px;
+    padding: 0 1em 52px;
+    .heading {
+        font-size: $head;
+    }
+    .summary {
+        margin-top: 16px;
+        font-weight: $light;
+        font-size: $bigger;
+        line-height: 1.444;
+    }
+    hr {
+        margin: 15px 0 22px;
+    }
+    .credit {
+        margin-bottom: 24px;
+        .author {
+            float: left;
+            .by {
+                font-family: $font-add;
+            }
+        }
+        .date {
+            text-align: right;
+        }
+    }
+    .media {
+        @include flex-center($justify: start);
+        text-align: left;
+        margin-bottom: 31px;
+        text-align: left;
+        .user-link {
+            margin-right: 8px;
+        }
+        .value {
+            @include flex-center();
+            width: 39px;
+            height: 28px;
+            margin-right: 9px;
+            font-size: $smaller;
+            background: $color-bubble;
+            border-radius: 14px;
+        }
+        .like {
+            font-size: $smaller;
+        }
+    }
+}
+
+#bottom-bar {
+    @include flex-center;
+    position: fixed;
+    width: 100%;
+    height: 52px;
+    bottom: 0;
+    background: $color-bottom;
+    border-top: 1px solid rgba($color-white, .15s);
+    .icon {
+        display: inline-block;
+        width: 20%;
+        text-align: center;
+        opacity: .3;
+        @include transition;
+        &.active {
+            opacity: 1;
+        }
+        &:hover:not(.active) {
+            opacity: .5;
+        }
+    }
+}
+
+.page-title {
+    @include flex-center;
+    margin-top: 52px;
+    .title {
+        font-size: $bigger;
+        font-weight: $normal;
+        float: left;
+        margin-right: 19px;
+    }
+}
+
+#tabs {
+    width: 100%;
+    height: 53px;
+    margin-top: 29px;
+    border-bottom: 1px solid rgba($color-white, 0.1);
+    box-shadow: inset 0 3px 12px rgba(#000, 0.5);
+    background: $color-top;
+    overflow: hidden;
+    #month-list {
+        @include flex-center($justify: start);
+        height: 100%;
+        overflow: scroll;
+        z-index: 1;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        .month {
+            display: inline-flex;
+            padding: 0 15px;
+            font-size: $smaller;
+            font-weight: $normal;
+            color: #ccc;
+            cursor: pointer;
+            span {
+                border-bottom: 3px solid transparent;
+                padding: 17px 5px;
+            }
+            &.current span {
+                color: $color-white;
+                border-bottom: 3px solid $color-blue;
+            }
+        }
+    }
+}
+// Hide scrollbar on big screens
+@media only screen and (min-width: 1000px) {
+    #tabs #month-list {
+        overflow: hidden;
+    }
+}

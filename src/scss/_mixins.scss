@@ -1,0 +1,9 @@
+@mixin flex-center($align: center, $justify: center) {
+    display: flex;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+@mixin transition($prop: all, $ease: ease-out, $dur: .4s) {
+    transition: $prop $ease $dur;
+}
