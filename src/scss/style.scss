@@ -21,14 +21,38 @@ hr {
     background: rgba($color-white, .15s);
 }
 
-#back {
+.small {
+    font-size: $small;
+}
+.big {
+    font-size: $big;
+}
+.bigger {
+    font-size: $bigger;
+}
+
+#back, #edit {
     position: absolute;
     width: 43px;
     height: 43px;
     top: 37px;
     left: 38px;
     z-index: 2;
-    #ellipse {
+    &#edit {
+        left: auto;
+        right: 38px;
+        color: $color-white;
+        font-weight: $light;
+        @include transition;
+        .ellipse:hover:after {
+            transform: rotate(90deg);
+        }
+        &.close {
+            transform: rotate(45deg);
+            transform-origin: center center;
+        }
+    }
+    .ellipse {
         @include flex-center;
         box-sizing: border-box;
         width: inherit;
@@ -54,7 +78,7 @@ hr {
             &:after {
                 opacity: 1;
                 border-top: 1px solid rgba($color-white, .4);
-                transform: rotate(270deg);
+                transform: rotate(-90deg);
             }
         }
     }
@@ -114,7 +138,6 @@ hr {
     .summary {
         margin-top: 16px;
         font-weight: $light;
-        font-size: $big;
         line-height: 1.444;
     }
     hr {
@@ -145,12 +168,8 @@ hr {
             width: 39px;
             height: 28px;
             margin-right: 9px;
-            font-size: $small;
             background: $color-bubble;
             border-radius: 14px;
-        }
-        .like {
-            font-size: $small;
         }
     }
 }
@@ -182,7 +201,6 @@ hr {
     @include flex-center;
     margin-top: 52px;
     .title {
-        font-size: $big;
         font-weight: $normal;
         float: left;
         margin-right: 19px;
@@ -206,16 +224,14 @@ hr {
         overflow-y: hidden;
         .month {
             display: inline-flex;
-            padding: 0 15px;
-            font-size: $small;
+            padding: 17px 8px;
+            margin: 0 8px;
             font-weight: $normal;
             color: #ccc;
+            border-bottom: 3px solid transparent;
+            @include transition;
             cursor: pointer;
-            span {
-                border-bottom: 3px solid transparent;
-                padding: 17px 5px;
-            }
-            &.current span {
+            &.current {
                 color: $color-white;
                 border-bottom: 3px solid $color-blue;
             }
@@ -225,12 +241,29 @@ hr {
 // Hide scrollbar on big screens
 @media only screen and (min-width: 1000px) {
     #tabs #month-list {
+        @include flex-center;
         overflow: hidden;
     }
 }
 
+// Doughnut chart
+#chart-container {
+    @include flex-center;
+    margin: 47px auto 27px;
+    width: 250px;
+    height: 250px;
+    .balance {
+        position: absolute;
+        .tag {
+            font-family: $font-add;
+            text-align: center;
+            margin-top: 20px;
+        }
+    }
+}
+
 // Expenses and categories
-#expenses {
+#details {
     display: inline-block;
     position: relative;
     box-sizing: border-box;
@@ -238,12 +271,11 @@ hr {
     padding: 1em;
     text-align: center;
     #sum {
-        font-size: $big;
         margin-left: 8px;
+        margin-bottom: 100px;
     }
-    #category {
-        margin-top: 11px;
-        font-size: $small;
+    #spent {
+        margin-bottom: 11px;
     }
 }
 
@@ -261,23 +293,68 @@ hr {
         border-radius: 4px;
         margin: 1em .5em;
         border: 1px solid;
-        &.income {
+        &.savings {
             border-color: $color-blue;
         }
-        &.outcome {
+        &.expenses {
             border-color: $color-pink;
         }
-        .usd {
-            font-size: $bigger;
-        }
         .cents-wrap {
-            width: 30px;
+            width: 25px;
             text-align: center;
-            .cents, .stat-icon {
-                display: inline-block;
-                font-size: $small;
+        }
+    }
+}
+.usd {
+    float: left;
+    margin-right: 3px;
+}
+
+// Modal box for editing 
+#modal {
+    position: fixed;
+    display: block;
+    top: 100%;
+    width: 100%;
+    height: 100%;
+    background: #0E0F1A;
+    z-index: 1;
+    transform: scale(0.8);
+    @include transition;
+    &.open {
+        transform: scale(1);
+        top: 0
+    }
+    form {
+        padding: 1em;
+        margin-top: 100px;
+        .input-wrap {
+            margin: auto;
+            text-align: left;
+            h2 {
+                text-align: left;
+                padding: 12px 0 0;
+                margin: .5em 0;
+            }
+            input {
+                box-sizing: border-box;
+                padding: 12px;
+                margin-top: 18px;
+                border-radius: 4px;
+                color: $color-blue;
+                &[type="number"] {
+                    width: 100%;
+                    background: rgba(#000, .2);
+                    box-shadow: inset 0 1px 3px rgba(#000, .1);
+                }
+                &[type="submit"] {
+                    display: block;
+                    margin-top: 24px;
+                    width: 100%;
+                    background: $color-blue;
+                    color: $color-white;
+                }
             }
         }
-        
     }
 }

@@ -135,3 +135,67 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+
+a {
+    text-decoration: none;
+    color: inherit;
+    &:visited {
+        color: inherit;
+    }
+}
+
+input,
+label,
+select,
+button,
+textarea {
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    line-height: 1;
+    border: none;
+    font-family: inherit;
+}
+
+input:focus {
+    outline: 0;
+}
+
+input,
+textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+button,
+input[type=reset],
+input[type=button],
+input[type=submit],
+input[type=checkbox],
+input[type=radio],
+select {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+input[type=checkbox],
+input[type=radio] {
+    width: 13px;
+    height: 13px;
+}
+
+input[type=search] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+}
+
+button,
+input[type="reset"],
+input[type="button"],
+input[type="submit"] {
+    overflow: visible;
+    width: auto;
+    border: none;
+}

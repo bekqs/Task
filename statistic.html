@@ -10,79 +10,85 @@
     <title>Statistic</title>
 </head>
 
-<body cz-shortcut-listen="true">
+<body>
     <div id="back">
-        <a href="" id="ellipse">
+        <a href="./" class="ellipse">
             <img src="./src/images/arrow-back.png" alt="Back">
         </a>
     </div>
+    <div id="edit">
+        <a href="#" class="ellipse bigger">+</a>
+    </div>
+
+    <div id="modal-wrap">
+        <div id="modal">
+            <form id="form">
+                <div class="input-wrap">
+                    <h2>Income</h2>
+                    <input type="number" name="income" id="income" placeholder="Monthly income" step="0.01" required>
+                    <h2>Expenses</h2>
+                    <input type="number" name="food" id="food" placeholder="Food and restaurants" step="0.01" required>
+                    <input type="number" name="transport" id="transport" placeholder="Transport" step="0.01" required>
+                    <input type="number" name="utilities" id="utilities" placeholder="House and utilities" step="0.01" required>
+                    <input type="number" name="personal" id="personal" placeholder="Personal" step="0.01" required>
+                    <input type="submit" value="Save">
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="page-title">
-        <h2 class="title">Statistic</h2>
+        <h2 class="title big">Statistic</h2>
         <img src="./src/images/icons/statistic.png" alt="Statistic">
     </div>
 
     <div id="tabs">
         <ul id="month-list">
-            <li class="month">
-                <span>January</span>
-            </li>
-            <li class="month">
-                <span>February</span>
-            </li>
-            <li class="month">
-                <span>March</span>
-            </li>
-            <li class="month">
-                <span>April</span>
-            </li>
-            <li class="month">
-                <span>May</span>
-            </li>
-            <li class="month">
-                <span>June</span>
-            </li>
-            <li class="month">
-                <span>July</span>
-            </li>
-            <li class="month current">
-                <span>August</span>
-            </li>
-            <li class="month">
-                <span>September</span>
-            </li>
-            <li class="month">
-                <span>October</span>
-            </li>
-            <li class="month">
-                <span>November</span>
-            </li>
-            <li class="month">
-                <span>December</span>
-            </li>
+            <li id="jan" class="month small current">January</li>
+            <li id="feb" class="month small">February</li>
+            <li id="mar" class="month small">March</li>
+            <li id="apr" class="month small">April</li>
+            <li id="may" class="month small">May</li>
+            <li id="jun" class="month small">June</li>
+            <li id="jul" class="month small">July</li>
+            <li id="aug" class="month small">August</li>
+            <li id="sep" class="month small">September</li>
+            <li id="oct" class="month small">October</li>
+            <li id="nov" class="month small">November</li>
+            <li id="dec" class="month small">December</li>
         </ul>
     </div>
 
-    <div id="expenses">
+    <div id="chart-container">
+        <canvas id="myChart" width="250" height="250"></canvas>
+        <div class="balance">
+            <p class="usd bigger" id="balance-left"></p>
+            <sup id="cents-left" class="small"></sup>
+            <p class="tag small">balance</p>
+        </div>
+    </div>
+
+    <div id="details">
         <p id="spent">
             <img src="./src/images/icons/utensils.png" alt="Food and restaurants">
-            <span id="sum">$230</span>
+            <span id="sum" class="big">$230</span>
         </p>
-        <p id="category">Food and restaurants</p>
+        <p id="category small">Food and restaurants</p>
+        <!-- <button id="random">random</button> -->
     </div>
 
     <div id="total">
-        <div class="amount income">
-            <p class="usd">+$1400</p>
+        <div class="amount savings">
+            <p class="usd bigger">+$1400</p>
             <div class="cents-wrap">
-                <p class="cents">99</p>
+                <sup class="small">99</sup>
                 <img src="./src/images/icons/income.png" class="stat-icon">
             </div>
         </div>
-        <div class="amount outcome">
-            <p class="usd">-$980</p>
+        <div class="amount expenses">
+            <p class="usd bigger">-$980</p>
             <div class="cents-wrap">
-                <p class="cents">25</p>
+                <sup class="small">25</sup>
                 <img src="./src/images/icons/outcome.png" class="stat-icon">
             </div>
         </div>

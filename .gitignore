@@ -1,3 +1,5 @@
 /node_modules
 .vscode
 Instructions.txt
+steps.txt
+app-backup.js
