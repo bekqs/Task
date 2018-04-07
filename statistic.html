@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css?family=Heebo|Lato:300,400" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="./lib/main.css"> -->
+    <link rel="stylesheet" href="./lib/main.css">
     <title>Statistic</title>
 </head>
 
@@ -16,14 +18,29 @@
             <img src="./src/images/arrow-back.png" alt="Back">
         </a>
     </div>
-    <div id="edit">
-        <a href="#" class="ellipse bigger">+</a>
-    </div>
 
     <div id="modal-wrap">
         <div id="modal">
+            <div id="close">
+                <img src="./src/images/icons/close.png" alt="">
+            </div>
             <form id="form">
                 <div class="input-wrap">
+                    <select name="" id="select-month" required>
+                        <option value="">Select month</option>
+                        <option value="jan">January</option>
+                        <option value="feb">February</option>
+                        <option value="mar">March</option>
+                        <option value="apr">April</option>
+                        <option value="may">May</option>
+                        <option value="jun">June</option>
+                        <option value="jul">July</option>
+                        <option value="aug">August</option>
+                        <option value="sep">September</option>
+                        <option value="oct">October</option>
+                        <option value="nov">November</option>
+                        <option value="dec">December</option>
+                    </select>
                     <h2>Income</h2>
                     <input type="number" name="income" id="income" placeholder="Monthly income" step="0.01" required>
                     <h2>Expenses</h2>
@@ -44,7 +61,7 @@
 
     <div id="tabs">
         <ul id="month-list">
-            <li id="jan" class="month small current">January</li>
+            <li id="jan" class="month small">January</li>
             <li id="feb" class="month small">February</li>
             <li id="mar" class="month small">March</li>
             <li id="apr" class="month small">April</li>
@@ -59,6 +76,16 @@
         </ul>
     </div>
 
+    <div id="edit">
+        <p class="small">Edit</p>
+    </div>
+
+    <div id="create-stats">
+        <h2 class="big">There are no stats yet!</h2>
+        <h3>Please add data to generate chart</h3>
+        <button id="new">Create Chart</button>
+    </div>
+
     <div id="chart-container">
         <canvas id="myChart" width="250" height="250"></canvas>
         <div class="balance">
@@ -70,11 +97,10 @@
 
     <div id="details">
         <p id="spent">
-            <img src="./src/images/icons/utensils.png" alt="Food and restaurants">
-            <span id="sum" class="big">$230</span>
+            <img src="" alt="" id="icon">
+            <span id="sum" class="big"></span>
         </p>
-        <p id="category small">Food and restaurants</p>
-        <!-- <button id="random">random</button> -->
+        <p id="category" class="small"></p>
     </div>
 
     <div id="total">

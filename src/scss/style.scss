@@ -31,29 +31,14 @@ hr {
     font-size: $bigger;
 }
 
-#back, #edit {
+#back {
     position: absolute;
     width: 43px;
     height: 43px;
     top: 37px;
-    left: 38px;
-    z-index: 2;
-    &#edit {
-        left: auto;
-        right: 38px;
-        color: $color-white;
-        font-weight: $light;
-        @include transition;
-        .ellipse:hover:after {
-            transform: rotate(90deg);
-        }
-        &.close {
-            transform: rotate(45deg);
-            transform-origin: center center;
-        }
-    }
+    left: 16px;
     .ellipse {
-        @include flex-center;
+        @include flex-center;    
         box-sizing: border-box;
         width: inherit;
         height: inherit;
@@ -238,11 +223,44 @@ hr {
         }
     }
 }
-// Hide scrollbar on big screens
+// Hide scrollbal from months on big screens
 @media only screen and (min-width: 1000px) {
     #tabs #month-list {
         @include flex-center;
         overflow: hidden;
+    }
+}
+
+// Add stats button
+#create-stats {
+    position: absolute;
+    text-align: center;
+    position: absolute; 
+    left: 0; 
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto; 
+    width: 100%;
+    height: 200px;
+    h2 {
+        font-size: $bigger;
+        padding: 16px 8px;
+    }
+    h3 {
+        font-size: $big;
+    }
+    #new {
+        padding: 1em 1.5em;
+        margin-top: 16px;
+        border-radius: 4px;
+        color: $color-white;
+        background: $color-input;
+        cursor: pointer;
+        @include transition;
+        &:hover {
+            background: $color-pink;
+        }
     }
 }
 
@@ -257,8 +275,11 @@ hr {
         .tag {
             font-family: $font-add;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 35px;
         }
+    }
+    canvas {
+        cursor: pointer;
     }
 }
 
@@ -333,28 +354,69 @@ hr {
             text-align: left;
             h2 {
                 text-align: left;
-                padding: 12px 0 0;
-                margin: .5em 0;
+                margin: 16px 8px -8px;
             }
-            input {
+            input, select {
                 box-sizing: border-box;
+                width: 100%;
                 padding: 12px;
                 margin-top: 18px;
                 border-radius: 4px;
-                color: $color-blue;
+                background: $color-input;
+                box-shadow: inset 0 1px 3px rgba(#000, .1);
+                color: $color-white;
                 &[type="number"] {
+                    color: $color-blue;
                     width: 100%;
-                    background: rgba(#000, .2);
-                    box-shadow: inset 0 1px 3px rgba(#000, .1);
                 }
                 &[type="submit"] {
                     display: block;
                     margin-top: 24px;
                     width: 100%;
                     background: $color-blue;
-                    color: $color-white;
                 }
             }
         }
     }
+}
+
+#edit {
+    @include transition($dur: .2s);
+    position: relative;
+    float: right;
+    background: $color-dark;
+    top: 20px;
+    right: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    p {
+        font-family: $font-add;
+        padding: .4em .8em;
+    }
+    &:hover {
+        background: $color-blue;
+        p {
+            color: $color-white;
+        }
+    }
+}
+
+#close {
+    @include transition($dur: .2s);
+    position: absolute;
+    display: inline-block;
+    right: 16px;
+    top: 45px;
+    cursor: pointer;
+    transform: scale(.8);
+    &:hover {
+        transform: scale(1);
+    }
+}
+
+// Hide elements before chart is created
+#edit, #chart-container, #details {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity ease-out .4s .2s;
 }
