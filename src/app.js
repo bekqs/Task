@@ -6,7 +6,6 @@ const ctx = document.getElementById('myChart').getContext("2d");
 let data;
 let options;
 
-// Feature test
 // Feature detect + local reference
 let storage;
 let fail;
@@ -21,6 +20,7 @@ try {
 
 // Get infromation from HTML file
 const local = window.localStorage;
+const monthTab = document.querySelectorAll('.month');
 const income = document.getElementById('income');
 const food = document.getElementById('food');
 const transport = document.getElementById('transport');
@@ -30,19 +30,21 @@ const form = document.getElementById('form');
 const icon = document.getElementById('icon');
 const category = document.getElementById('category');
 const spentCat = document.getElementById('sum');
+const hide = document.querySelectorAll('#chart-container, #edit, #details');
 let arr = JSON.parse(local.getItem('stats')) || [];
-let personalVal = JSON.parse(local.getItem('personal')) || "";
-let foodVal = JSON.parse(local.getItem('food')) || "";
-let transportVal = JSON.parse(local.getItem('transport')) || "";
-let utilitiesVal = JSON.parse(local.getItem('utilities')) || "";
-let wage = local.getItem('wage') || "";
+let personalVal = JSON.parse(local.getItem('personal')) || '';
+let foodVal = JSON.parse(local.getItem('food')) || '';
+let transportVal = JSON.parse(local.getItem('transport')) || '';
+let utilitiesVal = JSON.parse(local.getItem('utilities')) || '';
+let wage = local.getItem('wage') || '';
 let balance = local.getItem('balance') || '';
 let savings;
 let expenses;
 let totalSpent;
 let updatedStats = [];
 // Months object
-let months = {
+const selectMonth = document.getElementById('select-month');
+let months = JSON.parse(local.getItem('months')) || {
     jan: [],
     feb: [],
     mar: [],
@@ -62,21 +64,12 @@ function checkStorage() {
     if (localStorage.getItem('months') === null) {
         console.log('Please add data to get statistics');
     } else {
-        const hiddenElements = document.querySelectorAll('#chart-container, #edit, #details');
         document.getElementById('create-stats').style.display = 'none';
-        hiddenElements.forEach(function(element) {
+        hide.forEach(element => {
             element.style.visibility = 'visible';
             element.style.opacity = 1;
         });
     }
-}
-
-// Add months to localStorage
-// STUCK HERE
-function addStats(month) {
-    const monthList = local.setItem('months', JSON.stringify(months));
-    const parsed = JSON.parse(local.getItem('months'));
-    console.log(parsed);
 }
 
 // Toggle modal
@@ -89,13 +82,6 @@ function close() {
 document.getElementById('new').addEventListener('click', open);
 document.getElementById('edit').addEventListener('click', open);
 document.getElementById('close').addEventListener('click', close);
-
-// Calculate balance and total spent
-function getBalance(arr) {
-    totalSpent = arr.reduce((a,b) => (a + Number(b)), 0);
-    balance = wage - totalSpent;
-    local.setItem('balance', JSON.stringify(balance));
-}
 
 // Create gradients
 let gradientViolet = ctx.createLinearGradient(200, 0, 0, 0);
@@ -130,12 +116,6 @@ options = {
     elements: {
         arc: {
             borderWidth: 0
-        },
-        center: {
-            text: 'Desktop',
-            color: '#FFF',
-            fontStyle: 'Consolas',
-            sidePadding: 15
         }
     },
     animation: {
@@ -165,42 +145,63 @@ function pushStats() {
         utilitiesVal = JSON.parse(local.getItem('utilisties'));
         updatedStats = [personalVal, foodVal, transportVal, utilitiesVal];
         myChart.data.datasets[0].data = updatedStats;
-        // Change icon and label
+        option(selectMonth);
+        local.setItem('months', JSON.stringify(months));
+
+        // reset icon and label
         displayInfo(myChart.data.labels[0], personalVal); 
     }
     window.myChart.update();
 }
 
-// Run create chart function
-window.onload = () => {
-    ctx;
-    window.myChart = getNewChart(ctx, data);
-    displayInfo(myChart.data.labels[0], personalVal);
-    checkStorage();
-};
+// Pushes updatedStats array into months object
+function option(sel) {
+    const selected = sel.options[sel.selectedIndex].value;
+    const monthsData = JSON.parse(local.getItem('months'));
 
-// Create chart function
-function getNewChart(ctx, data) {
-    return new Chart(ctx, {
-        type: 'doughnut',
-        data: data,
-        options: options
-    });
+    updatedStats = updatedStats.map(Number);
+    months[selected] = updatedStats;
+    document.querySelector('.current').classList.remove('current');
+    document.getElementById(selected).classList.add('current');
 }
 
 // Switch between months
-const monthTab = document.getElementsByClassName('month');
-// Add/remove .current class from month list
-for (let i = 0; i < monthTab.length; i++) {
-    monthTab[0].classList.add('current');
-    monthTab[i].addEventListener('click', function(event) {
-        document.querySelector('.current').classList.remove('current');
-        monthTab[i].classList.add('current');
+function currentMonth() {
+    monthTab.forEach(element => {
+        element.addEventListener('click', target => {
+            document.querySelector('.current').classList.remove('current');
+            element.classList.add('current');
+            
+            updatedStats = months[event.target.id];
+            myChart.data.datasets[0].data = updatedStats;
+            spentCat.innerHTML = `$${updatedStats[0]}`;          
+            // Calculate balance and total amount spent
+            displayValues(updatedStats);
+            window.myChart.update();
+            // If the current month has no data hide chart elements
+            if (months[event.target.id].length === 0) {
+                document.getElementById('create-stats').style.display = 'block';
+                hide.forEach(element => {
+                    element.style.visibility = 'hidden';
+                    element.style.opacity = 0;
+                });
+            } else {
+                hide.forEach(element => {
+                    document.getElementById('create-stats').style.display = 'none';
+                    element.style.visibility = 'visible';
+                    element.style.opacity = 1;
+                });
+            }
+        })
+    });
+}
 
-        // Function to change stats according to clicked month element
-        // TO DO
-    })
-};
+// Get balance
+function getBalance(arr) {
+    totalSpent = arr.reduce((a,b) => (a + Number(b)), 0);
+    balance = wage - totalSpent;
+    balance = local.setItem('balance', JSON.stringify(balance));
+}
 
 // Push values to local
 function storeLocally(e) {
@@ -210,16 +211,12 @@ function storeLocally(e) {
     local.setItem('wage', wage);
     // Add stats
     pushStats();
-    // Balance left
-    getBalance(updatedStats);
-    // Add stats
-    addStats();
-    // Update balance
-    displayValues();
-    // Close modal on success
+    // Close modal after adding data
     close();
-    // Draw chart
-    window.myChart.update();
+    // Current month
+    currentMonth();
+    //
+    displayValues(updatedStats);
     // Check storage
     checkStorage()
 
@@ -227,7 +224,8 @@ function storeLocally(e) {
 };
 
 // Display values inside HTML elements
-function displayValues() {
+function displayValues(arr) {
+    getBalance(arr);
     const balanceLeft = document.getElementById('balance-left');
     const centsLeft = document.getElementById('cents-left');
     const balanceVal = local.getItem('balance') || "";
@@ -238,15 +236,9 @@ function displayValues() {
         centsLeft.innerHTML = '';
     } else {
         balanceLeft.innerHTML = `$${balanceVal.split(".")[0]}`;
-        centsLeft.innerHTML = Math.round(balanceVal.split(".")[1]);
-    }
-    // If balance is less than zero stop counting
-    if (balanceVal <= 0) {
-        balanceLeft.innerHTML = '$0';
-        centsLeft.innerHTML = '00';
+        centsLeft.innerHTML = parseFloat(balanceVal.split(".")[1]).toFixed(0);
     }
 };
-displayValues();
 
 // Click events for chart
 document.getElementById("myChart").addEventListener('click', e => {
@@ -254,8 +246,7 @@ document.getElementById("myChart").addEventListener('click', e => {
     const firstPoint = activePoints[0];
     const label = myChart.data.labels[firstPoint._index];
     const value = myChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-
-    displayInfo(label, value)
+    displayInfo(label, value);
 })
 
 // Display label info  
@@ -282,3 +273,23 @@ function displayInfo(label, value) {
 
 // Submit form
 form.addEventListener('submit', storeLocally);
+
+// Create chart function
+function getNewChart(ctx, data) {
+    return new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: options
+    });
+}
+
+// Run create chart function
+window.onload = () => {
+    ctx;
+    window.myChart = getNewChart(ctx, data);
+    monthTab[0].classList.add('current');
+    displayInfo(myChart.data.labels[0], personalVal);
+    checkStorage();
+    currentMonth();
+    displayValues(updatedStats);
+};
