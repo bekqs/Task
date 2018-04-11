@@ -60,6 +60,7 @@ function showHide() {
 // Adds data to selected month
 function option(sel) {
     const selected = sel.options[sel.selectedIndex].value;
+    const selectedMonth = document.getElementById(selected);
     salary = income.value;
     arr = [personal.value, food.value, transport.value, utilities.value];
     spentArr = arr.map(Number);
@@ -72,7 +73,9 @@ function option(sel) {
     myChart.data.datasets[0].data = spentArr;
     // Add .current class to the selected month
     document.querySelector('.current').classList.remove('current');
-    document.getElementById(selected).classList.add('current');
+    selectedMonth.classList.add('current');
+    // Scroll months container horizontally, so the current month can be seen
+    document.getElementById('month-list').scrollLeft = selectedMonth.offsetLeft - 8;
     displayInfo(myChart.data.labels[0], spentArr[0]);
     updateBalance(selected);
     createBtn.style.display = 'none';
