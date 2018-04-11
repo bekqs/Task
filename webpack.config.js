@@ -1,11 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+// These plugins were causing the problem, seems to be working now
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const isHot = path.basename(require.main.filename) === 'webpack-dev-server.js';
 
 module.exports = {
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'source-map',
     entry: ['babel-polyfill', './src/app.js'],
     output: {
         path: path.resolve(__dirname, 'lib'),
@@ -24,7 +25,6 @@ module.exports = {
             test: /\.(scss|css)$/,
             use: [
                 'css-hot-loader',
-                'style-loader',
                 MiniCssExtractPlugin.loader,
                 { 
                     loader: 'css-loader',
@@ -38,13 +38,13 @@ module.exports = {
                 {
                     loader: 'postcss-loader',
                     options: {
-                        sourceMap: 'inline'
-                      }
+                        sourceMap: true
+                    }
                 }, 
                 { 
                     loader: 'sass-loader', 
                     options: { 
-                        sourceMap: true 
+                        sourceMap: true,
                     } 
                 }
             ]
@@ -69,10 +69,9 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         new UglifyJsPlugin(),
         new MiniCssExtractPlugin({
-            filename:  "[name].bundle.[chunkhash].css",
-            chunkFilename:  "[id].[chunkhash].css"
+            filename:  "[name].css",
+            chunkFilename:  "[id].css"
         })
     ],
     mode: 'development',
-    cache: false,
 }

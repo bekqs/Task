@@ -1,4 +1,6 @@
 const css = require('./scss/style.scss');
+// localStorage detection
+const storage = !!function(v,l){try{return (l=localStorage).setItem(v,v)|!l.removeItem(v)}catch(e){}}('_');
 // Chart.js
 import Chart from 'chart.js';
 import {get} from 'https';
@@ -6,19 +8,6 @@ const ctx = document.getElementById('myChart').getContext("2d");
 let data;
 let options;
 
-// Feature detect + local reference
-let storage;
-let fail;
-let uid;
-try {
-	uid = new Date;
-	(storage = window.localStorage).setItem(uid, uid);
-	fail = storage.getItem(uid) != uid;
-	storage.removeItem(uid);
-	fail && (storage = false);
-} catch (exception) {}
-
-// Get infromation from HTML file
 const local = window.localStorage;
 const monthTab = document.querySelectorAll('.month');
 const income = document.getElementById('income');
@@ -30,21 +19,17 @@ const form = document.getElementById('form');
 const icon = document.getElementById('icon');
 const category = document.getElementById('category');
 const spentCat = document.getElementById('sum');
-const hide = document.querySelectorAll('#chart-container, #edit, #details');
-let arr = JSON.parse(local.getItem('stats')) || [];
-let personalVal = JSON.parse(local.getItem('personal')) || '';
-let foodVal = JSON.parse(local.getItem('food')) || '';
-let transportVal = JSON.parse(local.getItem('transport')) || '';
-let utilitiesVal = JSON.parse(local.getItem('utilities')) || '';
-let wage = local.getItem('wage') || '';
-let balance = local.getItem('balance') || '';
-let savings;
-let expenses;
-let totalSpent;
-let updatedStats = [];
-// Months object
 const selectMonth = document.getElementById('select-month');
-let months = JSON.parse(local.getItem('months')) || {
+const hide = document.querySelectorAll('#chart-container, #edit, #details');
+const toggleModal = document.querySelectorAll('#new, #edit, #close, #submit');
+const createBtn = document.getElementById('create-stats');
+let arr = [];
+let salary;
+let spentArr = [];
+let balance;
+// Months object
+let myData = JSON.parse(local.getItem('months'));
+let months = myData || {
     jan: [],
     feb: [],
     mar: [],
@@ -56,199 +41,93 @@ let months = JSON.parse(local.getItem('months')) || {
     sep: [],
     oct: [],
     nov: [],
-    dec: []
+    dec: [],    
 };
-
-// Check if localStorage is empty
-function checkStorage() {
-    if (localStorage.getItem('months') === null) {
-        console.log('Please add data to get statistics');
+// Show/hide chart elements
+function showHide() {
+    if (createBtn.style.display === 'block') {
+        hide.forEach(element => {
+            element.style.visibility = 'hidden';
+            element.style.opacity = 0;
+        });
     } else {
-        document.getElementById('create-stats').style.display = 'none';
         hide.forEach(element => {
             element.style.visibility = 'visible';
             element.style.opacity = 1;
         });
     }
 }
-
-// Toggle modal
-function open() {
-    document.getElementById('modal').classList.toggle('open');
-}
-function close() {
-    document.getElementById('modal').classList.remove('open');
-}
-document.getElementById('new').addEventListener('click', open);
-document.getElementById('edit').addEventListener('click', open);
-document.getElementById('close').addEventListener('click', close);
-
-// Create gradients
-let gradientViolet = ctx.createLinearGradient(200, 0, 0, 0);
-gradientViolet.addColorStop(0, "#FF2366");
-gradientViolet.addColorStop(1, "#8D4DE8");
-
-let gradientBlue = ctx.createLinearGradient(0, 200, 0, 0);
-gradientBlue.addColorStop(0, "#6956EC");
-gradientBlue.addColorStop(1, "#56B2BA");
-
-let gradientYellow = ctx.createLinearGradient(0, 0, 200, 0);
-gradientYellow.addColorStop(0, "#FD3F2F");
-gradientYellow.addColorStop(1, "#FACE15");
-
-// Chart data
-data = {
-    labels: ['Personal', 'House and utilities', 'Transport', 'Food and restaurants'],
-    datasets: [{
-        data: [personalVal, foodVal, transportVal, utilitiesVal],
-        backgroundColor: ['#0e0f1a', gradientViolet, gradientBlue, gradientYellow],
-        borderColor: ['#0e0f1a', gradientViolet, gradientBlue, gradientYellow],
-    }]
-};
-
-// Chart options
-options = {
-    events: [],
-    cutoutPercentage: 70,
-    legend: {
-        display: false
-    },
-    elements: {
-        arc: {
-            borderWidth: 0
-        }
-    },
-    animation: {
-        animateScale: true
-    },
-    rotation: (-0.5 * Math.PI) - (120/180 * Math.PI)
-};
-
-// Display spent amount and category
-function updateInfo() {
-    icon.src = './src/images/icons/utensils.png';
-    category.innerHTML = myChart.data.labels[0];
-    spentCat.innerHTML = `$${personalVal}`;
-}
-
-// Push data to localStorage stats property
-function pushStats() {
-    if (storage) {
-        local.setItem('personal', JSON.stringify(personal.value));
-        local.setItem('food', JSON.stringify(food.value));
-        local.setItem('transport', JSON.stringify(transport.value));
-        local.setItem('utilisties', JSON.stringify(utilities.value));
-
-        personalVal = JSON.parse(local.getItem('personal'));
-        foodVal = JSON.parse(local.getItem('food'));
-        transportVal = JSON.parse(local.getItem('transport'));
-        utilitiesVal = JSON.parse(local.getItem('utilisties'));
-        updatedStats = [personalVal, foodVal, transportVal, utilitiesVal];
-        myChart.data.datasets[0].data = updatedStats;
-        option(selectMonth);
-        local.setItem('months', JSON.stringify(months));
-
-        // reset icon and label
-        displayInfo(myChart.data.labels[0], personalVal); 
-    }
-    window.myChart.update();
-}
-
-// Pushes updatedStats array into months object
+// Adds data to selected month
 function option(sel) {
     const selected = sel.options[sel.selectedIndex].value;
-    const monthsData = JSON.parse(local.getItem('months'));
-
-    updatedStats = updatedStats.map(Number);
-    months[selected] = updatedStats;
+    salary = income.value;
+    arr = [personal.value, food.value, transport.value, utilities.value];
+    spentArr = arr.map(Number);
+    balance = salary - spentArr.reduce((a, b) => a + b);
+    months[selected] = {
+        salary: salary,
+        spent: spentArr,
+        balance: balance
+    };
+    myChart.data.datasets[0].data = spentArr;
+    // Add .current class to the selected month
     document.querySelector('.current').classList.remove('current');
     document.getElementById(selected).classList.add('current');
+    displayInfo(myChart.data.labels[0], spentArr[0]);
+    updateBalance(selected);
+    createBtn.style.display = 'none';
+    showHide();
+    window.myChart.update();
+} 
+// Push data to localStorage
+function pushStats(e) {
+    e.preventDefault();
+    if (storage) {
+        option(selectMonth);
+        local.setItem('months', JSON.stringify(months));
+        this.reset();
+    }
 }
-
+// Display values inside HTML elements
+function updateBalance(month) {
+    const balanceLeft = document.getElementById('balance-left');
+    const centsLeft = document.getElementById('cents-left');
+    const storedData = JSON.parse(local.getItem('months'));    
+    const balanceValue = months[month].balance.toString();
+    // Get portion of value before and after floating point
+    // Save them in 2 separate HTML elements
+    if (parseInt(balanceValue) == balanceValue) {
+        balanceLeft.innerHTML = `$${balanceValue.split(".")[0]}`;
+        centsLeft.innerHTML = '00';
+    } else {
+        balanceLeft.innerHTML = `$${balanceValue.split(".")[0]}`;
+        centsLeft.innerHTML = (balanceValue % 1).toFixed(2).substring(2);
+    }
+}
 // Switch between months
 function currentMonth() {
     monthTab.forEach(element => {
-        element.addEventListener('click', target => {
+        element.addEventListener('click', function(event) {
             document.querySelector('.current').classList.remove('current');
             element.classList.add('current');
-            
-            updatedStats = months[event.target.id];
-            myChart.data.datasets[0].data = updatedStats;
-            spentCat.innerHTML = `$${updatedStats[0]}`;          
-            // Calculate balance and total amount spent
-            displayValues(updatedStats);
-            window.myChart.update();
             // If the current month has no data hide chart elements
-            if (months[event.target.id].length === 0) {
+            if (months[this.id].length <= 0) {
                 document.getElementById('create-stats').style.display = 'block';
-                hide.forEach(element => {
-                    element.style.visibility = 'hidden';
-                    element.style.opacity = 0;
-                });
+                showHide();
             } else {
-                hide.forEach(element => {
-                    document.getElementById('create-stats').style.display = 'none';
-                    element.style.visibility = 'visible';
-                    element.style.opacity = 1;
-                });
+                document.getElementById('create-stats').style.display = 'none';
+                showHide();
+                // Update data when clicking on another month
+                spentArr = months[event.target.id].spent;
+                myChart.data.datasets[0].data = spentArr;
+                spentCat.innerHTML = `$${months[this.id].spent[0]}`; 
+                updateBalance(this.id);
+                displayInfo(myChart.data.labels[0], spentArr[0]); 
+                window.myChart.update();
             }
         })
     });
 }
-
-// Get balance
-function getBalance(arr) {
-    totalSpent = arr.reduce((a,b) => (a + Number(b)), 0);
-    balance = wage - totalSpent;
-    balance = local.setItem('balance', JSON.stringify(balance));
-}
-
-// Push values to local
-function storeLocally(e) {
-    e.preventDefault();
-    // Monthly salary
-    wage = income.value;
-    local.setItem('wage', wage);
-    // Add stats
-    pushStats();
-    // Close modal after adding data
-    close();
-    // Current month
-    currentMonth();
-    //
-    displayValues(updatedStats);
-    // Check storage
-    checkStorage()
-
-    this.reset();
-};
-
-// Display values inside HTML elements
-function displayValues(arr) {
-    getBalance(arr);
-    const balanceLeft = document.getElementById('balance-left');
-    const centsLeft = document.getElementById('cents-left');
-    const balanceVal = local.getItem('balance') || "";
-    // Get portion of value before and after floating point
-    // Save them in 2 different HTML elements
-    if (parseInt(balanceVal) == balanceVal) {
-        balanceLeft.innerHTML = `$${balanceVal.split(".")[0]}`;
-        centsLeft.innerHTML = '';
-    } else {
-        balanceLeft.innerHTML = `$${balanceVal.split(".")[0]}`;
-        centsLeft.innerHTML = parseFloat(balanceVal.split(".")[1]).toFixed(0);
-    }
-};
-
-// Click events for chart
-document.getElementById("myChart").addEventListener('click', e => {
-    const activePoints = myChart.getElementsAtEvent(e);
-    const firstPoint = activePoints[0];
-    const label = myChart.data.labels[firstPoint._index];
-    const value = myChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-    displayInfo(label, value);
-})
-
 // Display label info  
 function displayInfo(label, value) {
     switch (label) {
@@ -271,9 +150,49 @@ function displayInfo(label, value) {
     spentCat.innerHTML = `$${value}`;
 }
 
-// Submit form
-form.addEventListener('submit', storeLocally);
+// Create gradients
+let gradientViolet = ctx.createLinearGradient(200, 0, 0, 0);
+gradientViolet.addColorStop(0, "#FF2366");
+gradientViolet.addColorStop(1, "#8D4DE8");
 
+let gradientBlue = ctx.createLinearGradient(0, 200, 0, 0);
+gradientBlue.addColorStop(0, "#6956EC");
+gradientBlue.addColorStop(1, "#56B2BA");
+
+let gradientYellow = ctx.createLinearGradient(0, 0, 200, 0);
+gradientYellow.addColorStop(0, "#FD3F2F");
+gradientYellow.addColorStop(1, "#FACE15");
+// Chart data
+data = {
+    labels: ['Personal', 'House and utilities', 'Transport', 'Food and restaurants'],
+    datasets: [{
+        data: [],
+        backgroundColor: ['#0e0f1a', gradientViolet, gradientBlue, gradientYellow],
+        borderColor: ['#0e0f1a', gradientViolet, gradientBlue, gradientYellow],
+    }]
+};
+// Chart options
+options = {
+    events: [],
+    cutoutPercentage: 70,
+    legend: {
+        display: false
+    },
+    elements: {
+        arc: {
+            borderWidth: 0
+        }
+    },
+    rotation: (-0.5 * Math.PI) - (120/180 * Math.PI)
+};
+// Click events for chart
+document.getElementById("myChart").addEventListener('click', e => {
+    const activePoints = myChart.getElementsAtEvent(e);
+    const firstPoint = activePoints[0];
+    const label = myChart.data.labels[firstPoint._index];
+    const value = myChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+    displayInfo(label, value);
+});
 // Create chart function
 function getNewChart(ctx, data) {
     return new Chart(ctx, {
@@ -282,14 +201,30 @@ function getNewChart(ctx, data) {
         options: options
     });
 }
-
-// Run create chart function
+// Create chart function on window load
 window.onload = () => {
     ctx;
     window.myChart = getNewChart(ctx, data);
     monthTab[0].classList.add('current');
-    displayInfo(myChart.data.labels[0], personalVal);
-    checkStorage();
     currentMonth();
-    displayValues(updatedStats);
+    local.setItem('months', JSON.stringify(months));
+    if (myData.jan.length <= 0) {
+        document.getElementById('create-stats').style.display = 'block';
+        showHide();
+    } else {
+        document.getElementById('create-stats').style.display = 'none';
+        showHide();
+        myChart.data.datasets[0].data = myData.jan.spent;
+        displayInfo(myChart.data.labels[0], myData.jan.spent[0]);
+        updateBalance('jan');
+        window.myChart.update();
+    }
 };
+// Open/close modal
+toggleModal.forEach(el => {
+    el.addEventListener('click', () => {
+        document.getElementById('modal').classList.toggle('open');
+    });
+});
+// Save data to local storage on form submit
+form.addEventListener('submit', pushStats);

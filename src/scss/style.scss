@@ -74,8 +74,10 @@ hr {
     position: relative;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: fill;
+    overflow: hidden;
     .image {
         width: 100%;
         height: auto;
@@ -144,7 +146,7 @@ hr {
     .media {
         @include flex-center($justify: start);
         text-align: left;
-        margin-bottom: 31px;
+        margin-bottom: 11px;
         text-align: left;
         .user-link {
             margin-right: 8px;
@@ -276,7 +278,7 @@ hr {
         .tag {
             font-family: $font-add;
             text-align: center;
-            margin-top: 35px;
+            margin-top: 18px;
         }
     }
     canvas {
