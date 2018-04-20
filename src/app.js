@@ -26,20 +26,7 @@ const toggleModal = document.querySelectorAll('#new, #edit, #close, #submit');
 const createBtn = document.getElementById('create-stats');
 // Months object
 let myData = JSON.parse(local.getItem('months'));
-let months = myData || {
-    jan: [],
-    feb: [],
-    mar: [],
-    apr: [],
-    may: [],
-    jun: [],
-    jul: [],
-    aug: [],
-    sep: [],
-    oct: [],
-    nov: [],
-    dec: [],    
-};
+let months = myData || { jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec };
 
 // localStorage detection
 const storage = !!function(v,l){try{return (l=localStorage).setItem(v,v)|!l.removeItem(v)}catch(e){}}('_');
@@ -136,6 +123,7 @@ window.onload = () => {
     } else {
         createBtn.style.display = 'none';
         showHide();
+        // On page load/refresh display first month stats
         myChart.data.datasets[0].data = months.jan.spent;
         updateLabel(myChart.data.labels[0], months.jan.spent[0]);
         updateBalance(months, 'jan');
