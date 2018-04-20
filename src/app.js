@@ -1,12 +1,12 @@
 const css = require('./scss/style.scss');
-// localStorage detection
-const storage = !!function(v,l){try{return (l=localStorage).setItem(v,v)|!l.removeItem(v)}catch(e){}}('_');
+
 // Chart.js
 import Chart from 'chart.js';
 import {get} from 'https';
 import {data, options} from './modules/chartSettings';
 const ctx = document.getElementById('myChart').getContext('2d');
-// Import AppData
+
+// Import modules
 import AppData from './modules/AppData';
 import updateBalance from './modules/updateBalance';
 import updateLabel from './modules/updateLabel';
@@ -40,6 +40,9 @@ let months = myData || {
     nov: [],
     dec: [],    
 };
+
+// localStorage detection
+const storage = !!function(v,l){try{return (l=localStorage).setItem(v,v)|!l.removeItem(v)}catch(e){}}('_');
 
 // Show/hide chart elements
 function showHide() {
