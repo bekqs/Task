@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const isHot = path.basename(require.main.filename) === 'webpack-dev-server.js';
 
 module.exports = {
-    devtool: 'source-map',
+    // devtool: 'source-map',
     entry: ['babel-polyfill', './src/app.js'],
     output: {
         path: path.resolve(__dirname, 'lib'),
