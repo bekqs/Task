@@ -14,7 +14,7 @@ gradientYellow.addColorStop(0, '#FD3F2F');
 gradientYellow.addColorStop(1, '#FACE15');
 
 // Chart data
-export let data = {
+let data = {
     labels: ['Personal', 'House and utilities', 'Transport', 'Food and restaurants'],
     datasets: [{
         data: [],
@@ -24,7 +24,7 @@ export let data = {
 };
 
 // Chart options
-export let options = {
+let options = {
     events: [],
     cutoutPercentage: 70,
     legend: {
@@ -37,3 +37,5 @@ export let options = {
     },
     rotation: (-0.5 * Math.PI) - (120/180 * Math.PI)
 };
+
+export { data, options };

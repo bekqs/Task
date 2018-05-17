@@ -73,7 +73,7 @@ function currentMonth() {
             document.querySelector('.current').classList.remove('current');
             element.classList.add('current');
             // If the current month has no data hide chart elements
-            if (months[this.id].length <= 0) {
+            if (Object.keys(months[this.id]).length <= 0) {
                 createBtn.style.display = 'block';
                 showHide();
             } else {
@@ -117,7 +117,7 @@ window.onload = () => {
     monthTab[0].classList.add('current');
     currentMonth();
     
-    if (months.jan.length <= 0) {
+    if (Object.keys(months.jan).length <= 0) {
         createBtn.style.display = 'block';
         showHide();
     } else {
